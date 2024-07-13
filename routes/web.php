@@ -14,7 +14,6 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::view('/forgot-password', 'auth.forgot-password');
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    // Route::get('/', [HomeController::class, 'index']);
-    Route::get('/home', [HomeController::class, 'index']);
-});
+Route::view('/home', 'home');
+
+Route::get('/get-users', [HomeController::class, 'index'])->middleware('auth:sanctum');

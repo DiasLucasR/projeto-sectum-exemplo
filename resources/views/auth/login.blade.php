@@ -13,7 +13,7 @@
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn-primary">{{ __('Login') }}</button>
+            <button type="submit" class="btn btn-primary">{{ __('Login') }}</button>
         </div>
 
         <div class="form-group text-center">
@@ -27,25 +27,39 @@
 </div>
 
 <script>
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Evitar submissão padrão do formulário
 
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: formData
+        const form = this;
+        const formData = new FormData(form);
+        const formObject = {};
+
+        formData.forEach((value, key) => {
+            formObject[key] = value;
         });
 
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(formObject)
+            });
         const result = await response.json();
+        
+        
         if (response.ok) {
             localStorage.setItem('auth_token', result.token);
             window.location.href = '/home';
         } else {
-            alert(result.message);
+            alert(result.message || 'Login failed. Please try again.');
         }
-    });
+    } catch (error) {
+        console.error('Error during login:', error);
+        alert('An error occurred. Please try again later.');
+    }
+});
 </script>

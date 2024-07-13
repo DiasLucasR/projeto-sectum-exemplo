@@ -7,6 +7,6 @@ use App\Models\User;
 class HomeController extends Controller {
     public function index() {
         $users = User::all();
-        return view('home', compact('users'));
+        return response(json_encode($users), 200);
     }
 }

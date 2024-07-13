@@ -15,8 +15,11 @@ return [
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,127.0.0.1')),
-
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
+        '%s%s',
+        'localhost,127.0.0.1,::1',
+        env('APP_URL') ? ',' . parse_url(env('APP_URL'), PHP_URL_HOST) : ''
+    ))),
 
     /*
     |--------------------------------------------------------------------------
@@ -42,8 +45,8 @@ return [
     | "expires_at" attribute, but first-party sessions are not affected.
     |
     */
-
-    'expiration' => null,
+    
+    'expiration' => 120,
 
     /*
     |--------------------------------------------------------------------------
@@ -72,9 +75,8 @@ return [
     */
 
     'middleware' => [
-        'authenticate_session' => Laravel\Sanctum\Http\Middleware\AuthenticateSession::class,
-        'encrypt_cookies' => Illuminate\Cookie\Middleware\EncryptCookies::class,
-        'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+        'verify_csrf_token' => \App\Http\Middleware\VerifyCsrfToken::class,
+        'encrypt_cookies' => \App\Http\Middleware\EncryptCookies::class,
+        'authenticate_session' => \Laravel\Sanctum\Http\Middleware\AuthenticateSession::class,
     ],
-
 ];
